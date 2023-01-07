@@ -9,7 +9,6 @@
 
   .feed__top {
     display: flex;
-    border-bottom: 1px solid #eff2f5;
     padding: 15px;
 
     form {
@@ -22,6 +21,7 @@
       margin: 0 10px;
       border-radius: 9px;
       background-color: #eff2f5;
+      width: 100%;
     }
     button {
       display: none;
@@ -49,6 +49,29 @@
         font-size: medium;
         margin-left: 10px;
       }
+    }
+  }
+
+  .input-section {
+    display: none;
+  }
+
+  .feed__close-btn {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 20px;
+    height: 20px;
+    background: #eff2f5;
+
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:hover {
+      background: #dbdada;
     }
   }
 }

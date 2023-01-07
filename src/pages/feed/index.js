@@ -1,41 +1,152 @@
-import { PhotoLibrary, Videocam } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
-import React, { useState } from "react";
+import { Close, PhotoLibrary, Videocam } from "@mui/icons-material";
+import { Avatar, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import firebase from "firebase";
+import { useStateValue } from "../../context/StateProvider";
+import db from "../../firebase";
+import Post from "../post";
 import "./index.scss";
 
 function Feed() {
-  const [post, setPost] = useState("");
+  const [{ user }, dispatch] = useStateValue();
+  const [posts, setPosts] = useState([]);
+  const storageRef = firebase.storage().ref();
+  const [uploadPost, setUploadPost] = useState("");
+  const [image, setImage] = useState(null);
+  const [tempImage, setTempImage] = useState("");
+
+  const checkImage = (imgLink) => {
+    if (imgLink?.includes("undefined")) {
+      return "";
+    } else {
+      return imgLink;
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const uploadImage = storageRef.child("images/" + image?.name).put(image);
+    uploadImage.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        storageRef
+          .child("images/" + image?.name)
+          .getDownloadURL()
+          .then((url) => {
+            console.log("url", url);
+            db.collection("posts").add({
+              message: uploadPost,
+              timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+              profilePic: user.photoURL,
+              username: user.displayName,
+              image: checkImage(url),
+            });
+            setUploadPost("");
+            setImage(null);
+          });
+      }
+    );
   };
+
+  const handleImagePreview = (e) => {
+    var file = e.target.files[0];
+    setImage(file);
+
+    if (file) {
+      if (file) {
+        const blob = new Blob([file], { type: "image/png" });
+        const blobURL = URL.createObjectURL(blob);
+
+        setTempImage(blobURL);
+      }
+    }
+  };
+  console.log("file", image);
+  useEffect(() => {
+    db.collection("posts")
+      .orderBy("timeStamp", "desc")
+      .onSnapshot((snapshot) =>
+        setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })))
+      );
+  }, []);
   return (
-    <div className="feed">
-      <div className="feed__top">
-        <Avatar />
-        <form>
-          <input
-            type={"text"}
-            placeholder="Write a post"
-            value={post}
-            onChange={(e) => setPost(e.target.value)}
-          />
-          <input placeholder="image URL" />
-          <button onClick={handleSubmit} type="submit">
-            Hidden Submit
-          </button>
-        </form>
-      </div>
-      <div className="feed__bottom">
-        <div className="feed__upload-options">
-          <Videocam style={{ color: "red" }} />
-          <h3>Live Video</h3>
+    <>
+      <div className="feed">
+        <div className="feed__top">
+          <Avatar src={user.photoURL} />
+          <form>
+            <input
+              type="text"
+              placeholder="Write a post"
+              value={uploadPost}
+              onChange={(e) => setUploadPost(e.target.value)}
+            />
+          </form>
         </div>
-        <div className="feed__upload-options">
-          <PhotoLibrary style={{ color: "green" }} />
-          <h3>Photo/Video</h3>
+        {image && (
+          <div
+            style={{
+              position: "relative",
+              border: "dashed",
+              height: "150px",
+              width: "150px",
+              borderColor: "#c9c9c9",
+              borderWidth: "2px",
+              marginLeft: "18px",
+            }}
+          >
+            <img
+              src={tempImage}
+              style={{
+                objectFit: "contain",
+                width: "150px",
+                height: "150px",
+                maxHeight: "150px",
+                maxWidth: "150px",
+              }}
+            />
+            <div className="feed__close-btn" onClick={(e) => setImage(null)}>
+              <Close style={{ width: "16px" }} />
+            </div>
+          </div>
+        )}
+        <div className="feed__bottom">
+          <div className="feed__upload-options">
+            <Videocam style={{ color: "red" }} />
+            <h3>Live Video</h3>
+          </div>
+          <div className="feed__upload-options">
+            <label style={{ display: "flex", alignItems: "center" }}>
+              <PhotoLibrary style={{ color: "green" }} />
+
+              <h3>Photo</h3>
+
+              <input
+                type={"file"}
+                className="input-section"
+                accept="image/png, image/jpeg"
+                onChange={(e) => handleImagePreview(e)}
+              />
+            </label>
+          </div>
         </div>
+        {(uploadPost || image) && <Button onClick={handleSubmit}>Post</Button>}
       </div>
-    </div>
+      {posts.map((post) => (
+        <Post
+          key={post.id}
+          profilePic={post.data.profilePic}
+          message={post.data.message}
+          timeStamp={post.data.timeStamp}
+          username={post.data.username}
+          image={post.data.image}
+        />
+      ))}
+    </>
   );
 }
 
