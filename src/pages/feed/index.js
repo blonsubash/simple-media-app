@@ -1,11 +1,13 @@
-import { Close, PhotoLibrary, Videocam } from "@mui/icons-material";
+import firebase from "firebase";
 import { Avatar, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import firebase from "firebase";
-import { useStateValue } from "../../context/StateProvider";
-import db from "../../firebase";
-import Post from "../post";
+import { Close, PhotoLibrary, Videocam } from "@mui/icons-material";
+
 import "./index.scss";
+
+import Post from "../post";
+import db from "../../firebase";
+import { useStateValue } from "../../context/StateProvider";
 
 function Feed() {
   const [{ user }, dispatch] = useStateValue();
@@ -22,6 +24,7 @@ function Feed() {
       return imgLink;
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -30,14 +33,13 @@ function Feed() {
       "state_changed",
       (snapshot) => {},
       (error) => {
-        console.log(error);
+        console.error(error);
       },
       () => {
         storageRef
           .child("images/" + image?.name)
           .getDownloadURL()
           .then((url) => {
-            console.log("url", url);
             db.collection("posts").add({
               message: uploadPost,
               timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -55,7 +57,6 @@ function Feed() {
   const handleImagePreview = (e) => {
     var file = e.target.files[0];
     setImage(file);
-
     if (file) {
       if (file) {
         const blob = new Blob([file], { type: "image/png" });
@@ -65,7 +66,7 @@ function Feed() {
       }
     }
   };
-  console.log("file", image);
+
   useEffect(() => {
     db.collection("posts")
       .orderBy("timeStamp", "desc")
@@ -73,6 +74,7 @@ function Feed() {
         setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })))
       );
   }, []);
+
   return (
     <>
       <div className="feed">

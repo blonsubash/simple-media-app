@@ -1,9 +1,12 @@
-import { Button } from "@mui/material";
 import React from "react";
+import { Button } from "@mui/material";
+
 import "./index.scss";
+
 import { auth, provider } from "../../firebase";
 import { actionTypes } from "../../context/reducer";
 import { useStateValue } from "../../context/StateProvider";
+
 function Login() {
   const [state, dispatch] = useStateValue();
   const signIn = () => {

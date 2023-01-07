@@ -1,12 +1,14 @@
 import React from "react";
-import "./index.scss";
-import logoIcon from "../../assets/images/logo.png";
 import { Avatar, IconButton } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
+
+import "./index.scss";
+
 import { useStateValue } from "../../context/StateProvider";
+
 function Header() {
   const [{ user }, dispatch] = useStateValue();
-  console.log("user", user);
+
   return (
     <div className="header">
       <div className="header__left">
