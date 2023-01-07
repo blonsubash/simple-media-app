@@ -16,6 +16,7 @@ function Feed() {
   const [uploadPost, setUploadPost] = useState("");
   const [image, setImage] = useState(null);
   const [tempImage, setTempImage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const checkImage = (imgLink) => {
     if (imgLink?.includes("undefined")) {
@@ -27,6 +28,7 @@ function Feed() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setUploading(true);
 
     const uploadImage = storageRef.child("images/" + image?.name).put(image);
     uploadImage.on(
@@ -49,6 +51,7 @@ function Feed() {
             });
             setUploadPost("");
             setImage(null);
+            setUploading(false);
           });
       }
     );
@@ -136,16 +139,21 @@ function Feed() {
             </label>
           </div>
         </div>
-        {(uploadPost || image) && <Button onClick={handleSubmit}>Post</Button>}
+        {(uploadPost || image) && (
+          <Button onClick={handleSubmit} disabled={uploading}>
+            {uploading ? "Uploading" : "Upload"}
+          </Button>
+        )}
       </div>
       {posts.map((post) => (
         <Post
-          key={post.id}
+          postId={post?.id}
           profilePic={post.data.profilePic}
           message={post.data.message}
           timeStamp={post.data.timeStamp}
           username={post.data.username}
           image={post.data.image}
+          likes={post.data.likes}
         />
       ))}
     </>
