@@ -154,6 +154,7 @@ function Feed() {
           username={post.data.username}
           image={post.data.image}
           likes={post.data.likes}
+          comments={post.data.comments}
         />
       ))}
     </>

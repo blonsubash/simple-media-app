@@ -74,4 +74,46 @@
       }
     }
   }
+
+  .post__comments {
+    display: flex;
+    margin: 10px;
+    input {
+      outline-width: 0;
+      border: none;
+      margin: 0 10px;
+      border-radius: 9px;
+      background-color: #eff2f5;
+      width: 100%;
+    }
+  }
+  .post__comment-lists {
+    display: flex;
+    flex-direction: column;
+
+    .post__comment {
+      display: flex;
+      align-items: center;
+      margin: 10px;
+
+      .post__comment-detail {
+        margin: 0px 10px;
+        background-color: #eff2f5;
+        width: 100%;
+        border-radius: 9px;
+        padding: 6px;
+      }
+
+      h5 {
+        margin: 0;
+        font-size: medium;
+      }
+      p {
+        margin: 0;
+        font-size: small;
+        color: gray;
+        padding-top: 2px;
+      }
+    }
+  }
 }
