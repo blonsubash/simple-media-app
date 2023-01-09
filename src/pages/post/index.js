@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import moment from "moment";
 import firebase from "firebase";
 import classNames from "classnames";
-import { Avatar } from "@mui/material";
 import { v4 as uuidV4 } from "uuid";
+import { Avatar } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Comment, Share, ThumbUp } from "@mui/icons-material";
 
 import "./index.scss";
 
-import { useStateValue } from "../../context/StateProvider";
 import db from "../../firebase";
-
+import { useStateValue } from "../../context/StateProvider";
 function Post({
   postId,
   profilePic,
@@ -63,19 +63,27 @@ function Post({
         <Avatar src={profilePic} className="post__avatar" />
         <div className="post__top-info">
           <h3>{username}</h3>
-          <p>{new Date(timeStamp?.toDate()).toUTCString()}</p>
+          {timeStamp && <p>{moment(timeStamp.toDate()).fromNow()}</p>}
         </div>
       </div>
       <div className="post__bottom">
         <p>{message}</p>
       </div>
-      <div className="post__image">
-        <img src={image} />
-      </div>
+      {image && (
+        <div className="post__image">
+          <img src={image} />
+        </div>
+      )}
+
       <div className="post__likes-comments-count">
         {likes?.length > "0" && (
           <div className="post__likes-count">
             {likes?.length} {likes?.length == "1" ? "Like" : "Likes"}
+          </div>
+        )}
+        {comments !== undefined && comments.length > "0" && (
+          <div style={{ marginLeft: "6px" }}>
+            {comments.length} {comments.length == "1" ? "Comment" : "Comments"}
           </div>
         )}
       </div>
@@ -132,9 +140,11 @@ function Post({
                       }}
                     >
                       <h5>{comment?.username}</h5>
-                      {/* <p style={{ fontSize: "10px" }}>
-                        {new Date(comment?.createdAt?.toDate()).toUTCString()}
-                      </p> */}
+                      {comment?.createdAt && (
+                        <p style={{ fontSize: "10px" }}>
+                          {moment(comment?.createdAt.toDate()).fromNow()}
+                        </p>
+                      )}
                     </div>
                     <p>{comment?.comment}</p>
                   </div>

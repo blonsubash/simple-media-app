@@ -82,16 +82,31 @@ function Feed() {
     <>
       <div className="feed">
         <div className="feed__top">
-          <Avatar src={user.photoURL} />
-          <form>
+          <div>
+            <Avatar src={user.photoURL} />
+          </div>
+
+          <div className="feed__top-input">
             <input
               type="text"
               placeholder="Write a post"
               value={uploadPost}
               onChange={(e) => setUploadPost(e.target.value)}
             />
-          </form>
+          </div>
+
+          {(uploadPost || image) && (
+            <Button
+              style={{ color: "White", backgroundColor: "#c71d1d" }}
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={uploading}
+            >
+              {uploading ? "Uploading" : "Upload"}
+            </Button>
+          )}
         </div>
+
         {image && (
           <div
             style={{
@@ -102,6 +117,7 @@ function Feed() {
               borderColor: "#c9c9c9",
               borderWidth: "2px",
               marginLeft: "18px",
+              marginTop: "12px",
             }}
           >
             <img
@@ -139,11 +155,6 @@ function Feed() {
             </label>
           </div>
         </div>
-        {(uploadPost || image) && (
-          <Button onClick={handleSubmit} disabled={uploading}>
-            {uploading ? "Uploading" : "Upload"}
-          </Button>
-        )}
       </div>
       {posts.map((post) => (
         <Post

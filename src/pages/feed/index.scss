@@ -11,20 +11,21 @@
     display: flex;
     padding: 15px;
 
-    form {
-      flex: 1;
-      display: flex;
-    }
-    input {
-      outline-width: 0;
-      border: none;
-      margin: 0 10px;
-      border-radius: 9px;
-      background-color: #eff2f5;
-      width: 100%;
-    }
-    button {
-      display: none;
+    .feed__top-input {
+      width: 80%;
+      input {
+        outline-width: 0;
+        border: none;
+        margin: 0 10px;
+        border-radius: 9px;
+        background-color: #eff2f5;
+        width: 90%;
+        height: 38px;
+
+        &::placeholder {
+          padding-left: 8px;
+        }
+      }
     }
   }
 
@@ -36,7 +37,7 @@
       display: flex;
       align-items: center;
       margin: 5px;
-      padding: 20px;
+      padding: 15px;
       color: gray;
 
       &:hover {
